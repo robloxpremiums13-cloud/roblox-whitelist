@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NeXoR MGUI - Whitelist Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #161616;
+      background-image: url('https://media.discordapp.net/attachments/1128984463167197226/1362400900395569242/pWUtWXByBdk1PqiEEhH18mP8kmA.png?ex=68058df6&is=68043c76&hm=6634de2fb4624f3833aa1f18fc49f69d38ccbc0881a157cc938e60d7d302f668&=&format=webp&quality=lossless&width=1243&height=699');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: -1;
+    }
+    .press-effect:active {
+      transform: scale(0.96);
+      transition: transform 0.1s ease-in-out;
+    }
+    .tab-active {
+      background: #FF7E1F;
+      color: white;
+    }
+    .tab-inactive {
+      background: #161616;
+      color: #999;
+    }
+  </style>
+</head>
+<body class="flex flex-col min-h-screen text-white bg-[#161616]">
+  <div class="overlay"></div>
+
+  <!-- Header -->
+  <nav class="flex justify-between items-center px-5 md:px-20 py-5 bg-[#202020]">
+    <div class="flex items-center space-x-3">
+      <img src="https://media.discordapp.net/attachments/1138416028834070649/1363463216826552451/New_Project_5.png?ex=68061f92&is=6804ce12&hm=ae801debf746cdc38fc9835aa8bf7dae49a9260721057642d331362e9aa0c9bb&=&format=webp&quality=lossless&width=640&height=640" alt="Logo" class="w-7 h-7 rounded">
+      <span class="text-xl font-semibold">NeXoR MGUI</span>
+    </div>
+    <div class="hidden md:flex items-center space-x-6 font-medium text-white">
+      <a href="https://discord.com/invite/CgKwY8yYEx" target="_blank" class="bg-white text-black px-4 py-1 rounded-full font-semibold hover:brightness-110 transition-all duration-200">Discord</a>
+      <a href="https://youtube.com/@renzianx?si=Sbmw0WnnTvQVYamv" target="_blank" class="bg-red-500 text-white px-4 py-1 rounded-full font-semibold hover:brightness-110 transition-all duration-200">Youtube</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex items-center justify-center p-6">
+    <div class="w-full max-w-2xl bg-[#202020] p-8 rounded-2xl shadow-lg">
+      <h2 class="text-3xl font-bold text-center mb-6">Whitelist Management</h2>
+      
+      <!-- Tabs -->
+      <div class="flex gap-2 mb-6">
+        <button onclick="switchTab('single')" id="tabSingle" 
+                class="flex-1 py-2 px-4 rounded-lg font-semibold transition tab-active">
+          Single User
+        </button>
+        <button onclick="switchTab('bulk')" id="tabBulk"
+                class="flex-1 py-2 px-4 rounded-lg font-semibold transition tab-inactive">
+          Bulk Add
+        </button>
+      </div>
+
+      <!-- Single User Form -->
+      <div id="singleUserForm" class="bg-[#161616] p-6 rounded-xl mb-6">
+        <h3 class="text-xl font-semibold mb-4">Add Single User</h3>
+        <div class="space-y-4">
+          <div>
+            <label for="robloxUsername" class="block text-sm font-medium mb-1">Roblox Username</label>
+            <input type="text" id="robloxUsername" placeholder="Enter Roblox username"
+                   class="w-full px-4 py-3 bg-[#202020] rounded-xl border border-[#333] focus:outline-none focus:border-orange-400" />
+          </div>
+          <div>
+            <label for="discordId" class="block text-sm font-medium mb-1">Discord ID (Optional)</label>
+            <input type="text" id="discordId" placeholder="Enter Discord ID"
+                   class="w-full px-4 py-3 bg-[#202020] rounded-xl border border-[#333] focus:outline-none focus:border-orange-400" />
+          </div>
+          <button onclick="addSingleUser()"
+                  class="w-full bg-orange-500 text-white font-semibold py-3 rounded-xl hover:brightness-110 transition duration-200 press-effect">
+            Add to Whitelist
+          </button>
+        </div>
+      </div>
+
+      <!-- Bulk Add Form -->
+      <div id="bulkAddForm" class="bg-[#161616] p-6 rounded-xl mb-6 hidden">
+        <h3 class="text-xl font-semibold mb-4">Bulk Add Users</h3>
+        <div class="space-y-4">
+          <div>
+            <label for="bulkUsernames" class="block text-sm font-medium mb-1">Paste Usernames (one per line)</label>
+            <textarea id="bulkUsernames" rows="8" placeholder="Username1&#10;Username2&#10;Username3&#10;Username4"
+                      class="w-full px-4 py-3 bg-[#202020] rounded-xl border border-[#333] focus:outline-none focus:border-orange-400 font-mono text-sm"></textarea>
+          </div>
+          <p class="text-xs text-gray-400">💡 Tip: You can paste a list of names, one per line. Duplicates will be skipped.</p>
+          <button onclick="bulkAddUsers()"
+                  class="w-full bg-orange-500 text-white font-semibold py-3 rounded-xl hover:brightness-110 transition duration-200 press-effect">
+            Add All Users
+          </button>
+        </div>
+      </div>
+
+      <!-- Whitelist Display -->
+      <div class="bg-[#161616] p-6 rounded-xl">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-semibold">Whitelisted Users (<span id="userCount">0</span>)</h3>
+          <div class="flex gap-2 flex-wrap">
+            <button onclick="clearAllUsers()"
+                    class="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:brightness-110 transition duration-200 text-sm press-effect">
+              Clear All
+            </button>
+            <button onclick="exportTXT()"
+                    class="bg-orange-500 text-white px-4 py-2 rounded-lg font-semibold hover:brightness-110 transition duration-200 text-sm press-effect">
+              📥 Export Whitelist
+            </button>
+          </div>
+        </div>
+        
+        <div id="userList" class="space-y-3 max-h-96 overflow-y-auto">
+          <!-- User items will be added here -->
+        </div>
+
+        <div id="emptyState" class="text-center py-8 text-gray-400">
+          <p>No users in whitelist yet</p>
+          <p class="text-sm mt-2">Add users above to get started</p>
+        </div>
+      </div>
+
+      <!-- API Endpoint Info -->
+      <div class="mt-6 bg-[#161616] p-6 rounded-xl">
+        <h3 class="text-lg font-semibold mb-3">🔗 How to Use</h3>
+        <div class="space-y-3 text-sm">
+          <div>
+            <p class="text-gray-300 mb-2">1. Add users using Single User or Bulk Add tabs</p>
+            <p class="text-gray-300 mb-2">2. Click <strong class="text-orange-400">📥 Export Whitelist</strong> to download whitelist.txt</p>
+            <p class="text-gray-300 mb-2">3. Upload whitelist.txt to your GitHub repository</p>
+            <p class="text-gray-300">4. Use this URL in your Roblox script:</p>
+          </div>
+          <div class="bg-[#202020] p-3 rounded-lg font-mono text-xs break-all">
+            <span class="text-orange-400">https://yourusername.github.io/repo/whitelist.txt</span>
+          </div>
+          <p class="text-xs text-gray-400 mt-3">⚠️ Remember to re-export and re-upload whitelist.txt whenever you update users!</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-[#202020] text-center text-sm py-4 text-gray-300">
+    &copy; 2025 NeXoR MGUI. All rights reserved.
+  </footer>
+
+  <script>
+    // Whitelist data structure
+    let whitelist = {
+      users: [],
+      lastUpdated: new Date().toISOString()
+    };
+
+    // Load whitelist from memory on page load
+    function loadWhitelist() {
+      const saved = localStorage.getItem('nexor_whitelist');
+      if (saved) {
+        whitelist = JSON.parse(saved);
+        renderUserList();
+      }
+    }
+
+    // Save whitelist to memory
+    function saveWhitelist() {
+      whitelist.lastUpdated = new Date().toISOString();
+      localStorage.setItem('nexor_whitelist', JSON.stringify(whitelist));
+    }
+
+    // Switch between tabs
+    function switchTab(tab) {
+      const singleForm = document.getElementById('singleUserForm');
+      const bulkForm = document.getElementById('bulkAddForm');
+      const tabSingle = document.getElementById('tabSingle');
+      const tabBulk = document.getElementById('tabBulk');
+
+      if (tab === 'single') {
+        singleForm.classList.remove('hidden');
+        bulkForm.classList.add('hidden');
+        tabSingle.className = 'flex-1 py-2 px-4 rounded-lg font-semibold transition tab-active';
+        tabBulk.className = 'flex-1 py-2 px-4 rounded-lg font-semibold transition tab-inactive';
+      } else {
+        singleForm.classList.add('hidden');
+        bulkForm.classList.remove('hidden');
+        tabSingle.className = 'flex-1 py-2 px-4 rounded-lg font-semibold transition tab-inactive';
+        tabBulk.className = 'flex-1 py-2 px-4 rounded-lg font-semibold transition tab-active';
+      }
+    }
+
+    // Add single user to whitelist
+    function addSingleUser() {
+      const username = document.getElementById('robloxUsername').value.trim();
+      const discordId = document.getElementById('discordId').value.trim();
+
+      if (!username) {
+        alert('Please enter a Roblox username');
+        return;
+      }
+
+      // Check if user already exists
+      const exists = whitelist.users.some(u => u.robloxUsername.toLowerCase() === username.toLowerCase());
+      if (exists) {
+        alert('User already in whitelist');
+        return;
+      }
+
+      // Add user
+      whitelist.users.push({
+        robloxUsername: username,
+        discordId: discordId || null,
+        addedDate: new Date().toISOString(),
+        status: 'active'
+      });
+
+      saveWhitelist();
+      renderUserList();
+
+      // Clear inputs
+      document.getElementById('robloxUsername').value = '';
+      document.getElementById('discordId').value = '';
+
+      showNotification('✅ User added successfully!');
+    }
+
+    // Bulk add users
+    function bulkAddUsers() {
+      const textarea = document.getElementById('bulkUsernames');
+      const usernames = textarea.value.split('\n')
+        .map(name => name.trim())
+        .filter(name => name.length > 0);
+
+      if (usernames.length === 0) {
+        alert('Please enter at least one username');
+        return;
+      }
+
+      let added = 0;
+      let skipped = 0;
+
+      usernames.forEach(username => {
+        // Check if user already exists
+        const exists = whitelist.users.some(u => u.robloxUsername.toLowerCase() === username.toLowerCase());
+        
+        if (!exists) {
+          whitelist.users.push({
+            robloxUsername: username,
+            discordId: null,
+            addedDate: new Date().toISOString(),
+            status: 'active'
+          });
+          added++;
+        } else {
+          skipped++;
+        }
+      });
+
+      saveWhitelist();
+      renderUserList();
+      textarea.value = '';
+
+      showNotification(`✅ Added ${added} user(s). Skipped ${skipped} duplicate(s).`);
+    }
+
+    // Remove user from whitelist
+    function removeUser(username) {
+      if (confirm(`Remove ${username} from whitelist?`)) {
+        whitelist.users = whitelist.users.filter(u => u.robloxUsername !== username);
+        saveWhitelist();
+        renderUserList();
+        showNotification('🗑️ User removed');
+      }
+    }
+
+    // Clear all users
+    function clearAllUsers() {
+      if (confirm('Are you sure you want to remove ALL users from the whitelist? This cannot be undone!')) {
+        whitelist.users = [];
+        saveWhitelist();
+        renderUserList();
+        showNotification('🗑️ All users removed');
+      }
+    }
+
+    // Render user list
+    function renderUserList() {
+      const userList = document.getElementById('userList');
+      const emptyState = document.getElementById('emptyState');
+      const userCount = document.getElementById('userCount');
+
+      userCount.textContent = whitelist.users.length;
+
+      if (whitelist.users.length === 0) {
+        userList.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+      userList.innerHTML = whitelist.users.map(user => `
+        <div class="bg-[#202020] p-4 rounded-lg flex justify-between items-center">
+          <div>
+            <p class="font-semibold text-orange-400">${user.robloxUsername}</p>
+            <p class="text-xs text-gray-400">Added: ${new Date(user.addedDate).toLocaleDateString()}</p>
+            ${user.discordId ? `<p class="text-xs text-gray-400">Discord: ${user.discordId}</p>` : ''}
+          </div>
+          <button onclick="removeUser('${user.robloxUsername}')"
+                  class="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:brightness-110 transition duration-200 text-sm press-effect">
+            Remove
+          </button>
+        </div>
+      `).join('');
+    }
+
+    // Export whitelist as TXT (one username per line)
+    function exportTXT() {
+      if (whitelist.users.length === 0) {
+        alert('No users to export!');
+        return;
+      }
+
+      const usernames = whitelist.users.map(user => user.robloxUsername).join('\n');
+      const dataBlob = new Blob([usernames], { type: 'text/plain' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'whitelist.txt';
+      link.click();
+      URL.revokeObjectURL(url);
+      showNotification('📥 whitelist.txt exported!');
+    }
+
+    // Show notification
+    function showNotification(message) {
+      const notification = document.createElement('div');
+      notification.className = 'fixed top-5 right-5 bg-orange-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+      notification.textContent = message;
+      document.body.appendChild(notification);
+      setTimeout(() => notification.remove(), 3000);
+    }
+
+    // Load whitelist on page load
+    loadWhitelist();
+  </script>
+</body>
+</html>
