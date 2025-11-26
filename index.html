@@ -51,8 +51,9 @@
       background: #ef4444;
     }
   </style>
-
-
+</head>
+<body class="flex flex-col min-h-screen text-white bg-[#161616]">
+  <div class="overlay"></div>
   <!-- Header -->
   <nav class="flex justify-between items-center px-5 md:px-20 py-5 bg-[#202020]">
     <div class="flex items-center space-x-3">
@@ -149,21 +150,7 @@
           </div>
         </div>
 
-        <!-- Whitelist Display -->
-        <div class="bg-[#161616] p-6 rounded-xl">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-semibold">Whitelisted Users (<span id="userCount">0</span>)</h3>
-            <div class="flex gap-2 flex-wrap">
-              <button onclick="syncToGitHub()"
-                      class="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:brightness-110 transition duration-200 text-sm press-effect">
-                🔄 Sync Now
-              </button>
-              <button onclick="clearAllUsers()"
-                      class="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:brightness-110 transition duration-200 text-sm press-effect">
-                Clear All
-              </button>
-            </div>
-          </div>
+        
           
           <div id="userList" class="space-y-3 max-h-96 overflow-y-auto">
             <!-- User items will be added here -->
