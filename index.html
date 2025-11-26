@@ -4,210 +4,321 @@
   <meta charset="UTF-8" />
   <title>NeXoR MGUI - Whitelist Management</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
+    * {
+      font-family: 'Inter', sans-serif;
+    }
     body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #161616;
-      background-image: url('	https://images.rbxcdn.com/a19e4c27a0694a1d0fd5ceb17c978a7a-marketing_bg_05222025.jpg');
-      background-size: cover;
-      background-position: center;
-      position: relative;
+      background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+      min-height: 100vh;
     }
-    .overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.8);
-      z-index: -1;
+    .glass-card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
-    .press-effect:active {
-      transform: scale(0.96);
-      transition: transform 0.1s ease-in-out;
+    .glass-input {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    .glass-input:focus {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #ff6b35;
+      box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.4);
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(255, 107, 53, 0.6);
+    }
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-2px);
     }
     .tab-active {
-      background: #FF7E1F;
+      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
       color: white;
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
     }
     .tab-inactive {
-      background: #161616;
-      color: #999;
+      background: rgba(255, 255, 255, 0.05);
+      color: #94a3b8;
     }
-    .status-dot {
-      width: 8px;
-      height: 8px;
+    .tab-inactive:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    .status-indicator {
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       display: inline-block;
-      margin-right: 6px;
+      margin-right: 8px;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
     }
     .status-connected {
       background: #10b981;
-      box-shadow: 0 0 8px #10b981;
+      box-shadow: 0 0 15px #10b981;
     }
     .status-disconnected {
       background: #ef4444;
+      box-shadow: 0 0 15px #ef4444;
+    }
+    .user-card {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+    .user-card:hover {
+      background: rgba(255, 255, 255, 0.08);
+      transform: translateX(5px);
+    }
+    .scroll-container {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 107, 53, 0.5) rgba(255, 255, 255, 0.1);
+    }
+    .scroll-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    .scroll-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+    .scroll-container::-webkit-scrollbar-thumb {
+      background: rgba(255, 107, 53, 0.5);
+      border-radius: 10px;
+    }
+    .scroll-container::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 107, 53, 0.7);
+    }
+    .glow-text {
+      text-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+    }
+    .floating {
+      animation: floating 3s ease-in-out infinite;
+    }
+    @keyframes floating {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+    }
+    .notification {
+      animation: slideIn 0.3s ease-out;
+    }
+    @keyframes slideIn {
+      from {
+        transform: translateX(400px);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
   </style>
 </head>
-<body class="flex flex-col min-h-screen text-white bg-[#161616]">
-  <div class="overlay"></div>
+<body class="text-white">
   <!-- Header -->
-  <nav class="flex justify-between items-center px-5 md:px-20 py-5 bg-[#202020]">
-    <div class="flex items-center space-x-3">
-      <img src="https://media.discordapp.net/attachments/1385041743111782490/1434508499454529646/New_Project.png?ex=691d04e6&is=691bb366&hm=bccb9718bd105c719d7e738a13d454276257c5f9ad8b555cbb7e25630325ccb4&=&format=webp&quality=lossless" alt="Logo" class="w-7 h-7 rounded">
-      <span class="text-xl font-semibold">X-FREE MGUI</span>
-    </div>
-    <div class="hidden md:flex items-center space-x-6 font-medium text-white">
-      <a href=" https://discord.gg/AKBYyBZcnY" target="_blank" class="bg-white text-black px-4 py-1 rounded-full font-semibold hover:brightness-110 transition-all duration-200">Discord</a>
-      <a href="https://youtube.com/@renzianx?si=Sbmw0WnnTvQVYamv" target="_blank" class="bg-red-500 text-white px-4 py-1 rounded-full font-semibold hover:brightness-110 transition-all duration-200">Youtube</a>
+  <nav class="glass-card sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-pink-500 flex items-center justify-center floating">
+            <img src="https://media.discordapp.net/attachments/1385041743111782490/1434508499454529646/New_Project.png?ex=691d04e6&is=691bb366&hm=bccb9718bd105c719d7e738a13d454276257c5f9ad8b555cbb7e25630325ccb4&=&format=webp&quality=lossless" alt="Logo" class="w-8 h-8">
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold glow-text">X-FREE MGUI</h1>
+            <p class="text-xs text-gray-400">Whitelist Management System</p>
+          </div>
+        </div>
+        <div class="flex items-center space-x-3">
+          <a href="https://discord.gg/AKBYyBZcnY" target="_blank" 
+             class="btn-secondary px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2">
+            <span>💬</span>
+            <span class="hidden md:inline">Discord</span>
+          </a>
+          <a href="https://youtube.com/@renzianx?si=Sbmw0WnnTvQVYamv" target="_blank" 
+             class="bg-red-600 hover:bg-red-700 px-6 py-2.5 rounded-xl font-semibold flex items-center space-x-2 transition-all">
+            <span>▶️</span>
+            <span class="hidden md:inline">YouTube</span>
+          </a>
+        </div>
+      </div>
     </div>
   </nav>
 
   <!-- Main Content -->
-  <main class="flex-1 flex items-center justify-center p-6">
-    <div class="w-full max-w-2xl space-y-6">
+  <main class="max-w-7xl mx-auto px-6 py-8">
+    <div class="grid lg:grid-cols-2 gap-6">
       
-      <!-- GitHub Configuration -->
-      <div class="bg-[#202020] p-8 rounded-2xl shadow-lg">
-        <h2 class="text-2xl font-bold mb-4">⚙️ GitHub Configuration</h2>
-        <div class="space-y-4">
-          <div>
-            <label for="githubToken" class="block text-sm font-medium mb-1">GitHub Personal Access Token</label>
-            <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx"
-                   class="w-full px-4 py-3 bg-[#161616] rounded-xl border border-[#333] focus:outline-none focus:border-orange-400" />
+      <!-- Left Column -->
+      <div class="space-y-6">
+        <!-- GitHub Configuration -->
+        <div class="glass-card p-8 rounded-3xl">
+          <div class="flex items-center space-x-3 mb-6">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+              <span class="text-xl">⚙️</span>
+            </div>
+            <h2 class="text-2xl font-bold">GitHub Configuration</h2>
           </div>
-          <div>
-            <label for="githubRepo" class="block text-sm font-medium mb-1">Repository (format: username/repo)</label>
-            <input type="text" id="githubRepo" placeholder="yourusername/whitelist-repo"
-                   class="w-full px-4 py-3 bg-[#161616] rounded-xl border border-[#333] focus:outline-none focus:border-orange-400" />
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-2 text-gray-300">Personal Access Token</label>
+              <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx"
+                     class="w-full px-4 py-3.5 glass-input rounded-xl outline-none text-white placeholder-gray-500" />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2 text-gray-300">Repository</label>
+              <input type="text" id="githubRepo" placeholder="username/repo-name"
+                     class="w-full px-4 py-3.5 glass-input rounded-xl outline-none text-white placeholder-gray-500" />
+            </div>
+            
+            <div class="flex gap-3 pt-2">
+              <button onclick="saveGitHubConfig()"
+                      class="flex-1 btn-primary py-3.5 rounded-xl font-semibold">
+                💾 Save Config
+              </button>
+              <button onclick="testConnection()"
+                      class="flex-1 btn-secondary py-3.5 rounded-xl font-semibold">
+                🔌 Test
+              </button>
+            </div>
+            
+            <div id="connectionStatus" class="glass-card p-4 rounded-xl text-center text-sm hidden">
+              <span class="status-indicator status-disconnected"></span>
+              <span id="statusText">Not configured</span>
+            </div>
           </div>
-          <div class="flex gap-3">
-            <button onclick="saveGitHubConfig()"
-                    class="flex-1 bg-orange-500 text-white font-semibold py-3 rounded-xl hover:brightness-110 transition duration-200 press-effect">
-              Save Configuration
-            </button>
-            <button onclick="testConnection()"
-                    class="flex-1 bg-white text-black font-semibold py-3 rounded-xl hover:brightness-110 transition duration-200 press-effect">
-              Test Connection
-            </button>
+        </div>
+
+        <!-- Whitelist URL -->
+        <div class="glass-card p-6 rounded-3xl">
+          <div class="flex items-center space-x-3 mb-4">
+            <span class="text-2xl">🔗</span>
+            <h3 class="text-lg font-bold">Your Whitelist URL</h3>
           </div>
-          <div id="connectionStatus" class="text-center text-sm p-3 rounded-lg bg-[#161616] hidden">
-            <span class="status-dot status-disconnected"></span>
-            <span id="statusText">Not configured</span>
+          <div class="glass-input p-4 rounded-xl font-mono text-xs break-all text-orange-400">
+            <span id="whitelistUrl">Configure GitHub first</span>
           </div>
+          <p class="text-xs text-gray-400 mt-3">💡 Use this URL in your Roblox script for automatic updates</p>
         </div>
       </div>
 
-      <!-- Whitelist Management -->
-      <div class="bg-[#202020] p-8 rounded-2xl shadow-lg">
-        <h2 class="text-3xl font-bold text-center mb-6">Whitelist Management</h2>
-        
-        <!-- Tabs -->
-        <div class="flex gap-2 mb-6">
-          <button onclick="switchTab('single')" id="tabSingle" 
-                  class="flex-1 py-2 px-4 rounded-lg font-semibold transition tab-active">
-            Single User
-          </button>
-          <button onclick="switchTab('bulk')" id="tabBulk"
-                  class="flex-1 py-2 px-4 rounded-lg font-semibold transition tab-inactive">
-            Bulk Add
-          </button>
-        </div>
-
-        <!-- Single User Form -->
-        <div id="singleUserForm" class="bg-[#161616] p-6 rounded-xl mb-6">
-          <h3 class="text-xl font-semibold mb-4">Add Single User</h3>
-          <div class="space-y-4">
-            <div>
-              <label for="robloxUsername" class="block text-sm font-medium mb-1">Roblox Username</label>
-              <input type="text" id="robloxUsername" placeholder="Enter Roblox username"
-                     class="w-full px-4 py-3 bg-[#202020] rounded-xl border border-[#333] focus:outline-none focus:border-orange-400" />
+      <!-- Right Column -->
+      <div class="space-y-6">
+        <!-- Whitelist Management -->
+        <div class="glass-card p-8 rounded-3xl">
+          <div class="flex items-center justify-between mb-6">
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-green-500 to-blue-500 flex items-center justify-center">
+                <span class="text-xl">👥</span>
+              </div>
+              <h2 class="text-2xl font-bold">Whitelist Manager</h2>
             </div>
-            <button onclick="addSingleUser()"
-                    class="w-full bg-orange-500 text-white font-semibold py-3 rounded-xl hover:brightness-110 transition duration-200 press-effect">
-              Add & Sync to GitHub
+            <div class="glass-card px-4 py-2 rounded-lg">
+              <span class="text-sm text-gray-400">Users: </span>
+              <span id="userCount" class="text-lg font-bold text-orange-400">0</span>
+            </div>
+          </div>
+          
+          <!-- Tabs -->
+          <div class="flex gap-3 mb-6">
+            <button onclick="switchTab('single')" id="tabSingle" 
+                    class="flex-1 py-3 rounded-xl font-semibold transition-all tab-active">
+              Single User
             </button>
+            <button onclick="switchTab('bulk')" id="tabBulk"
+                    class="flex-1 py-3 rounded-xl font-semibold transition-all tab-inactive">
+              Bulk Add
+            </button>
+          </div>
+
+          <!-- Single User Form -->
+          <div id="singleUserForm">
+            <div class="space-y-4">
+              <input type="text" id="robloxUsername" placeholder="Enter Roblox username..."
+                     class="w-full px-4 py-3.5 glass-input rounded-xl outline-none text-white placeholder-gray-500" />
+              <button onclick="addSingleUser()"
+                      class="w-full btn-primary py-3.5 rounded-xl font-semibold">
+                ➕ Add & Sync to GitHub
+              </button>
+            </div>
+          </div>
+
+          <!-- Bulk Add Form -->
+          <div id="bulkAddForm" class="hidden">
+            <div class="space-y-4">
+              <textarea id="bulkUsernames" rows="6" placeholder="Username1&#10;Username2&#10;Username3&#10;..."
+                        class="w-full px-4 py-3.5 glass-input rounded-xl outline-none text-white placeholder-gray-500 font-mono text-sm scroll-container"></textarea>
+              <p class="text-xs text-gray-400 flex items-center space-x-2">
+                <span>💡</span>
+                <span>One username per line. Duplicates will be skipped.</span>
+              </p>
+              <button onclick="bulkAddUsers()"
+                      class="w-full btn-primary py-3.5 rounded-xl font-semibold">
+                ➕ Add All & Sync
+              </button>
+            </div>
           </div>
         </div>
 
-        <!-- Bulk Add Form -->
-        <div id="bulkAddForm" class="bg-[#161616] p-6 rounded-xl mb-6 hidden">
-          <h3 class="text-xl font-semibold mb-4">Bulk Add Users</h3>
-          <div class="space-y-4">
-            <div>
-              <label for="bulkUsernames" class="block text-sm font-medium mb-1">Paste Usernames (one per line)</label>
-              <textarea id="bulkUsernames" rows="8" placeholder="Username1&#10;Username2&#10;Username3&#10;Username4"
-                        class="w-full px-4 py-3 bg-[#202020] rounded-xl border border-[#333] focus:outline-none focus:border-orange-400 font-mono text-sm"></textarea>
-            </div>
-            <p class="text-xs text-gray-400">💡 Tip: Paste a list of names, one per line. Duplicates will be skipped.</p>
-            <button onclick="bulkAddUsers()"
-                    class="w-full bg-orange-500 text-white font-semibold py-3 rounded-xl hover:brightness-110 transition duration-200 press-effect">
-              Add All & Sync to GitHub
-            </button>
-          </div>
-        </div>
-
-        <!-- Whitelist Display -->
-        <div class="bg-[#161616] p-6 rounded-xl">
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="text-xl font-semibold">Whitelisted Users (<span id="userCount">0</span>)</h3>
-            <div class="flex gap-2 flex-wrap">
+        <!-- User List -->
+        <div class="glass-card p-8 rounded-3xl">
+          <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-bold">Whitelisted Users</h3>
+            <div class="flex gap-2">
               <button onclick="syncToGitHub()"
-                      class="bg-green-500 text-white px-4 py-2 rounded-lg font-semibold hover:brightness-110 transition duration-200 text-sm press-effect">
-                🔄 Sync Now
+                      class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-xl font-semibold text-sm transition-all">
+                🔄 Sync
               </button>
               <button onclick="clearAllUsers()"
-                      class="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:brightness-110 transition duration-200 text-sm press-effect">
-                Clear All
+                      class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl font-semibold text-sm transition-all">
+                🗑️ Clear
               </button>
             </div>
           </div>
           
-          <div id="userList" class="space-y-3 max-h-96 overflow-y-auto">
-            <!-- User items will be added here -->
+          <div id="userList" class="space-y-3 max-h-96 overflow-y-auto scroll-container">
+            <!-- User items -->
           </div>
 
-          <div id="emptyState" class="text-center py-8 text-gray-400">
-            <p>No users in whitelist yet</p>
-            <p class="text-sm mt-2">Add users above to get started</p>
+          <div id="emptyState" class="text-center py-12">
+            <div class="text-6xl mb-4 opacity-20">👥</div>
+            <p class="text-gray-400">No users whitelisted yet</p>
+            <p class="text-sm text-gray-500 mt-2">Add users above to get started</p>
           </div>
-        </div>
-
-        <!-- Whitelist URL Info -->
-        <div class="mt-6 bg-[#161616] p-6 rounded-xl">
-          <h3 class="text-lg font-semibold mb-3">🔗 Your Whitelist URL</h3>
-          <div class="bg-[#202020] p-3 rounded-lg font-mono text-xs break-all">
-            <span id="whitelistUrl" class="text-orange-400">Configure GitHub settings above first</span>
-          </div>
-          <p class="text-xs text-gray-400 mt-3">💡 Use this URL in your Roblox script. Updates automatically when you add/remove users!</p>
         </div>
       </div>
-
     </div>
   </main>
 
-  <footer class="bg-[#202020] text-center text-sm py-4 text-gray-300">
-    &copy; 2025 X-FREE MGUI. All rights reserved.
+  <footer class="glass-card mt-12 py-6 text-center text-sm text-gray-400">
+    <p>&copy; 2025 X-FREE MGUI. All rights reserved.</p>
   </footer>
 
   <script>
-    // Configuration
-    let config = {
-      token: '',
-      repo: '',
-      branch: 'main'
-    };
+    let config = { token: '', repo: '', branch: 'main' };
+    let whitelist = { users: [], lastUpdated: new Date().toISOString() };
 
-    // Whitelist data
-    let whitelist = {
-      users: [],
-      lastUpdated: new Date().toISOString()
-    };
-
-    // Load data on page load
     function loadData() {
       const savedConfig = localStorage.getItem('nexor_github_config');
       if (savedConfig) {
@@ -224,13 +335,12 @@
       }
     }
 
-    // Save GitHub configuration
     function saveGitHubConfig() {
       const token = document.getElementById('githubToken').value.trim();
       const repo = document.getElementById('githubRepo').value.trim();
 
       if (!token || !repo) {
-        alert('Please enter both token and repository!');
+        showNotification('❌ Please enter both token and repository!', 'error');
         return;
       }
 
@@ -239,11 +349,10 @@
       localStorage.setItem('nexor_github_config', JSON.stringify(config));
       
       updateWhitelistUrl();
-      showNotification('✅ Configuration saved!');
+      showNotification('✅ Configuration saved!', 'success');
       testConnection();
     }
 
-    // Update whitelist URL display
     function updateWhitelistUrl() {
       const urlElement = document.getElementById('whitelistUrl');
       if (config.repo) {
@@ -252,7 +361,6 @@
       }
     }
 
-    // Test GitHub connection
     async function testConnection() {
       if (!config.token || !config.repo) {
         showStatus('Please configure GitHub settings first', false);
@@ -269,20 +377,21 @@
 
         if (response.ok) {
           showStatus('Connected to GitHub!', true);
-          showNotification('✅ GitHub connection successful!');
+          showNotification('✅ GitHub connection successful!', 'success');
         } else {
-          showStatus('Connection failed. Check your token/repo', false);
+          showStatus('Connection failed. Check your credentials', false);
+          showNotification('❌ Connection failed', 'error');
         }
       } catch (error) {
         showStatus('Connection error: ' + error.message, false);
+        showNotification('❌ Connection error', 'error');
       }
     }
 
-    // Show connection status
     function showStatus(message, isConnected) {
       const statusDiv = document.getElementById('connectionStatus');
       const statusText = document.getElementById('statusText');
-      const dot = statusDiv.querySelector('.status-dot');
+      const dot = statusDiv.querySelector('.status-indicator');
       
       statusDiv.classList.remove('hidden');
       statusText.textContent = message;
@@ -296,26 +405,23 @@
       }
     }
 
-    // Sync whitelist to GitHub
     async function syncToGitHub() {
       if (!config.token || !config.repo) {
-        alert('Please configure GitHub settings first!');
+        showNotification('❌ Please configure GitHub first!', 'error');
         return;
       }
 
       if (whitelist.users.length === 0) {
-        alert('No users to sync!');
+        showNotification('❌ No users to sync!', 'error');
         return;
       }
 
-      showNotification('🔄 Syncing to GitHub...');
+      showNotification('🔄 Syncing to GitHub...', 'info');
 
       try {
-        // Generate whitelist.txt content
         const content = whitelist.users.map(u => u.robloxUsername).join('\n');
         const encodedContent = btoa(unescape(encodeURIComponent(content)));
 
-        // Check if file exists
         let sha = null;
         try {
           const getResponse = await fetch(`https://api.github.com/repos/${config.repo}/contents/whitelist.txt`, {
@@ -328,20 +434,15 @@
             const data = await getResponse.json();
             sha = data.sha;
           }
-        } catch (e) {
-          // File doesn't exist yet
-        }
+        } catch (e) {}
 
-        // Create or update file
         const payload = {
           message: 'Update whitelist.txt',
           content: encodedContent,
           branch: config.branch
         };
 
-        if (sha) {
-          payload.sha = sha;
-        }
+        if (sha) payload.sha = sha;
 
         const response = await fetch(`https://api.github.com/repos/${config.repo}/contents/whitelist.txt`, {
           method: 'PUT',
@@ -354,20 +455,17 @@
         });
 
         if (response.ok) {
-          showNotification('✅ Synced to GitHub successfully!');
+          showNotification('✅ Synced successfully!', 'success');
           whitelist.lastUpdated = new Date().toISOString();
           localStorage.setItem('nexor_whitelist', JSON.stringify(whitelist));
         } else {
-          const error = await response.json();
-          throw new Error(error.message || 'Failed to sync');
+          throw new Error('Failed to sync');
         }
       } catch (error) {
-        showNotification('❌ Sync failed: ' + error.message);
-        console.error('Sync error:', error);
+        showNotification('❌ Sync failed: ' + error.message, 'error');
       }
     }
 
-    // Switch tabs
     function switchTab(tab) {
       const singleForm = document.getElementById('singleUserForm');
       const bulkForm = document.getElementById('bulkAddForm');
@@ -377,28 +475,27 @@
       if (tab === 'single') {
         singleForm.classList.remove('hidden');
         bulkForm.classList.add('hidden');
-        tabSingle.className = 'flex-1 py-2 px-4 rounded-lg font-semibold transition tab-active';
-        tabBulk.className = 'flex-1 py-2 px-4 rounded-lg font-semibold transition tab-inactive';
+        tabSingle.className = 'flex-1 py-3 rounded-xl font-semibold transition-all tab-active';
+        tabBulk.className = 'flex-1 py-3 rounded-xl font-semibold transition-all tab-inactive';
       } else {
         singleForm.classList.add('hidden');
         bulkForm.classList.remove('hidden');
-        tabSingle.className = 'flex-1 py-2 px-4 rounded-lg font-semibold transition tab-inactive';
-        tabBulk.className = 'flex-1 py-2 px-4 rounded-lg font-semibold transition tab-active';
+        tabSingle.className = 'flex-1 py-3 rounded-xl font-semibold transition-all tab-inactive';
+        tabBulk.className = 'flex-1 py-3 rounded-xl font-semibold transition-all tab-active';
       }
     }
 
-    // Add single user
     async function addSingleUser() {
       const username = document.getElementById('robloxUsername').value.trim();
 
       if (!username) {
-        alert('Please enter a Roblox username');
+        showNotification('❌ Please enter a username', 'error');
         return;
       }
 
       const exists = whitelist.users.some(u => u.robloxUsername.toLowerCase() === username.toLowerCase());
       if (exists) {
-        alert('User already in whitelist');
+        showNotification('⚠️ User already in whitelist', 'warning');
         return;
       }
 
@@ -412,11 +509,10 @@
       renderUserList();
       document.getElementById('robloxUsername').value = '';
 
-      showNotification('✅ User added!');
+      showNotification('✅ User added!', 'success');
       await syncToGitHub();
     }
 
-    // Bulk add users
     async function bulkAddUsers() {
       const textarea = document.getElementById('bulkUsernames');
       const usernames = textarea.value.split('\n')
@@ -424,7 +520,7 @@
         .filter(name => name.length > 0);
 
       if (usernames.length === 0) {
-        alert('Please enter at least one username');
+        showNotification('❌ Please enter at least one username', 'error');
         return;
       }
 
@@ -450,72 +546,10 @@
       renderUserList();
       textarea.value = '';
 
-      showNotification(`✅ Added ${added} user(s). Skipped ${skipped} duplicate(s).`);
+      showNotification(`✅ Added ${added} user(s). Skipped ${skipped}.`, 'success');
       await syncToGitHub();
     }
 
-    // Remove user
     async function removeUser(username) {
       if (confirm(`Remove ${username} from whitelist?`)) {
-        whitelist.users = whitelist.users.filter(u => u.robloxUsername !== username);
-        localStorage.setItem('nexor_whitelist', JSON.stringify(whitelist));
-        renderUserList();
-        showNotification('🗑️ User removed');
-        await syncToGitHub();
-      }
-    }
-
-    // Clear all users
-    async function clearAllUsers() {
-      if (confirm('Remove ALL users? This will also update GitHub!')) {
-        whitelist.users = [];
-        localStorage.setItem('nexor_whitelist', JSON.stringify(whitelist));
-        renderUserList();
-        showNotification('🗑️ All users removed');
-        await syncToGitHub();
-      }
-    }
-
-    // Render user list
-    function renderUserList() {
-      const userList = document.getElementById('userList');
-      const emptyState = document.getElementById('emptyState');
-      const userCount = document.getElementById('userCount');
-
-      userCount.textContent = whitelist.users.length;
-
-      if (whitelist.users.length === 0) {
-        userList.innerHTML = '';
-        emptyState.style.display = 'block';
-        return;
-      }
-
-      emptyState.style.display = 'none';
-      userList.innerHTML = whitelist.users.map(user => `
-        <div class="bg-[#202020] p-4 rounded-lg flex justify-between items-center">
-          <div>
-            <p class="font-semibold text-orange-400">${user.robloxUsername}</p>
-            <p class="text-xs text-gray-400">Added: ${new Date(user.addedDate).toLocaleDateString()}</p>
-          </div>
-          <button onclick="removeUser('${user.robloxUsername}')"
-                  class="bg-red-500 text-white px-4 py-2 rounded-lg font-semibold hover:brightness-110 transition duration-200 text-sm press-effect">
-            Remove
-          </button>
-        </div>
-      `).join('');
-    }
-
-    // Show notification
-    function showNotification(message) {
-      const notification = document.createElement('div');
-      notification.className = 'fixed top-5 right-5 bg-orange-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-pulse';
-      notification.textContent = message;
-      document.body.appendChild(notification);
-      setTimeout(() => notification.remove(), 3000);
-    }
-
-    // Load data on page load
-    loadData();
-  </script>
-</body>
-</html>
+        whitelist.users = whi
